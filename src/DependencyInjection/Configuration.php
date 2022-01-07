@@ -12,8 +12,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $root = $treeBuilder->root('ojezu_dynamic_parameter');
+        $treeBuilder = new TreeBuilder('ojezu_dynamic_parameter');
+        $root = $treeBuilder->getRootNode();
 
         $root
             ->children()
