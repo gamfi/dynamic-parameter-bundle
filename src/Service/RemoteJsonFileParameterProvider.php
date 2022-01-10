@@ -62,7 +62,11 @@ class RemoteJsonFileParameterProvider extends JsonParameterProvider
                 $request = $this->httpClient->request('GET', $this->jsonFileUrl, ['http_errors' => true]);
                 $content = $request->getBody()->getContents();
             } catch (\Throwable $e) {
-                $content = $this->alternativeProvider->getFileContents();
+                if ($this->alternativeProvider) {
+                    $content = $this->alternativeProvider->getFileContents();
+                } else {
+                    throw $e;
+                }
             }
             if ($this->cache) {
                 $this->cache->set($cacheKey, $content);
