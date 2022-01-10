@@ -24,15 +24,25 @@ class RemoteJsonFileParameterProvider extends JsonParameterProvider
     private $jsonFileUrl;
 
     /**
+     * @var JsonParameterProvider
+     */
+    private $alternativeProvider;
+
+    /**
      * @param $jsonFileUrl
      * @param ClientInterface|null $httpClient
      * @param CacheInterface|null $cacheAdapter
      */
-    public function __construct($jsonFileUrl, ClientInterface $httpClient = null, CacheInterface $cacheAdapter = null)
-    {
+    public function __construct(
+        $jsonFileUrl,
+        ClientInterface $httpClient = null,
+        CacheInterface $cacheAdapter = null,
+        JsonParameterProvider $alternativeProvider = null
+    ) {
         $this->jsonFileUrl = $jsonFileUrl;
         $this->httpClient = $httpClient ? $httpClient : new Client();
         $this->cache = $cacheAdapter;
+        $this->alternativeProvider = $alternativeProvider;
     }
 
     /**
@@ -48,9 +58,12 @@ class RemoteJsonFileParameterProvider extends JsonParameterProvider
         if ($this->cache && $this->cache->has($cacheKey)) {
             $content = $this->cache->get($cacheKey);
         } else {
-            $request = $this->httpClient->request('GET', $this->jsonFileUrl, ['http_errors' => true]);
-            $content = $request->getBody()->getContents();
-
+            try {
+                $request = $this->httpClient->request('GET', $this->jsonFileUrl, ['http_errors' => true]);
+                $content = $request->getBody()->getContents();
+            } catch (\Throwable $e) {
+                $content = $this->alternativeProvider->getFileContents();
+            }
             if ($this->cache) {
                 $this->cache->set($cacheKey, $content);
             }
