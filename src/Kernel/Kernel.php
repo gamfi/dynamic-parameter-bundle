@@ -16,12 +16,7 @@ abstract class Kernel extends BaseKernel
      */
     private $installation;
 
-    /**
-     * @param Installation $installation
-     * @param bool $environment
-     * @param $debug
-     */
-    public function __construct(Installation $installation, $environment, $debug)
+    public function __construct(Installation $installation, string $environment, bool $debug)
     {
         parent::__construct($environment, $debug);
         $this->installation = $installation;
