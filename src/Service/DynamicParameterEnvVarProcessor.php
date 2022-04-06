@@ -40,7 +40,7 @@ class DynamicParameterEnvVarProcessor implements EnvVarProcessorInterface
         $this->parameterProvider = $parameterProvider;
         $this->parameterMap = $parameterMap;
         $this->cache = [];
-        $this->noConfigurationMode = !$loadConfiguration;
+        $this->noConfigurationMode = !((bool)$loadConfiguration);
     }
 
     /**
